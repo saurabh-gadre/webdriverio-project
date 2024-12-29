@@ -1,7 +1,0 @@
-node_modules
-drivers/
-logs/
-results/
-debug/
-allure-results/
-.tmp
