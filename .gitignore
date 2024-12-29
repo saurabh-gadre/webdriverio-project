@@ -4,4 +4,4 @@ logs/
 results/
 debug/
 allure-results/
-.tmp/json/
+.tmp/
