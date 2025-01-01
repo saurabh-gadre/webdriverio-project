@@ -5,3 +5,5 @@ results/
 debug/
 allure-results/
 .tmp/
+/allure-report
+.vscode

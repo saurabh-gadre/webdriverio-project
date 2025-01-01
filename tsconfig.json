@@ -1,32 +1,26 @@
 {
+    "extends": "./tsconfig.base.json",
     "compilerOptions": {
-        "moduleResolution": "node",
-        "module": "ESNext",
-        "target": "es2022",
-        "lib": [
-            "es2022",
-            "dom"
-        ],
+        "sourceMap": false,
+        "target": "ESNext",
+        "module": "Node16",
+        "moduleResolution": "nodenext",
+        "removeComments": true,
+        "noImplicitAny": true,
+        "strictPropertyInitialization": true,
+        "esModuleInterop": true,
+        "strictNullChecks": true,
         "types": [
             "node",
+            "@wdio/types",
             "@wdio/globals/types",
+            "@wdio/cucumber-framework",
             "expect-webdriverio",
-            "@wdio/cucumber-framework"
-        ],
-        "skipLibCheck": true,
-        "noEmit": true,
-        "allowImportingTsExtensions": true,
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "strict": false,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true,
-        "esModuleInterop": true
+        ]
     },
     "include": [
-        "test",
-        "wdio.conf.ts",
-        "tests/features"
-    ]
+        "./config/**/*.ts",
+        "./tests/step-definitions/**/*.ts"
+    ],
+    "compileOnSave": false
 }

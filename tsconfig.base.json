@@ -1,0 +1,36 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "target": "ESNext",
+      "module": "NodeNext",
+      "moduleResolution":"NodeNext",
+      "declaration": true,
+      "allowJs": true,
+      "noEmit": false,
+      "strict": true,
+      "isolatedModules": false,
+      "esModuleInterop": true,
+      "resolveJsonModule": true,
+      "allowSyntheticDefaultImports" : true,
+      "skipLibCheck": true,
+      "noImplicitAny": false,
+      "outDir": "./lib/",
+      "types": [
+        "node",
+        "@rpii/wdio-report-events",
+        "@wdio/types",
+        "@wdio/globals/types",
+        "@wdio/cucumber-framework",
+        "expect-webdriverio",
+        "@wdio/sauce-service",
+      ]
+    },
+    "include": [
+      "./src/**/*.ts",
+  
+    ],
+    "exclude": [
+      "node_modules"
+    ],
+    "compileOnSave": false
+  }

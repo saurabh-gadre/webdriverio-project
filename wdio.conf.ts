@@ -1,4 +1,6 @@
-export const config: WebdriverIO.Config = {
+import { TimelineService } from 'wdio-timeline-reporter/timeline-service';
+
+export const config = {
     //
     // ====================
     // Runner Configuration
@@ -23,7 +25,7 @@ export const config: WebdriverIO.Config = {
     // of the config file unless it's absolute.
     //
     specs: [
-        './tests/features/login.feature'
+        './tests/features/general/*.feature', './tests/features/saucedemo/*.feature'
     ],
     // Patterns to exclude.
     exclude: [
@@ -45,31 +47,31 @@ export const config: WebdriverIO.Config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 10,
+    maxInstances: 1,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [
-        {
+        {   maxInstances: 1,
             browserName: 'chrome',
             'wdio:chromedriverOptions': { // or 'wdio:geckodriverOptions', 'wdio:edgedriverOptions'
                 binary: './drivers/chrome/chromedriver.exe' // or 'geckodriver', 'msedgedriver',
             },
             'goog:chromeOptions':{
-                args:['--start-maximized', '--headless', '--disable-gpu']
-            }
-        },
-        {
-            browserName: 'MicrosoftEdge',
-            'wdio:edgedriverOptions':{
-                binary: './drivers/msedge/msedgedriver.exe',
+                args:['--start-maximized']
             },
-            'ms:edgeOptions':{
-                args:['--start-maximized', '--headless', '--disable-gpu']
-            }
         },
+        // {
+        //     browserName: 'MicrosoftEdge',
+        //     'wdio:edgedriverOptions':{
+        //         binary: './drivers/msedge/msedgedriver.exe',
+        //     },
+        //     'ms:edgeOptions':{
+        //         args:['--start-maximized', '--headless', '--disable-gpu']
+        //     }
+        // },
     ],
 
     //cls
@@ -79,7 +81,7 @@ export const config: WebdriverIO.Config = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'info',
+    logLevel: 'error',
     //
     // Set specific log levels per logger
     // loggers:
@@ -119,7 +121,7 @@ export const config: WebdriverIO.Config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    //services: ['chromedriver'],
+    services: [[TimelineService]],
     //
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
@@ -142,12 +144,31 @@ export const config: WebdriverIO.Config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec',['allure', {outputDir: 'allure-results'}],'cucumberjs-json'],
+    reporters: ['spec',
+        ['allure', {
+            outputDir: 'allure-results',
+            useCucumberStepReporter: true,
+            disableMochaHooks: true,
+            disableWebdriverStepsReporting: true,
+            addConsoleLogs: true
+        }
+        ],
+        ['timeline', { 
+            outputDir: './results',
+            embedImages: true,
+            images:{
+                quality: 80,
+                resize: false,
+                reductionRatio: 2
+            },
+            screenshotStrategy: 'none'
+         }
+        ]],
 
     // If you are using Cucumber you need to specify the location of your step definitions.
     cucumberOpts: {
         // <string[]> (file/dir) require files before executing features
-        require: ['./tests/step-definitions/steps.ts'],
+        require: ['./tests/step-definitions/general/steps.ts','./tests/step-definitions/saucedemo/*.ts'],
         // <boolean> show full backtrace for errors
         backtrace: false,
         // <string[]> ("extension:module") require files with the given EXTENSION after requiring MODULE (repeatable)
@@ -165,7 +186,7 @@ export const config: WebdriverIO.Config = {
         // <boolean> fail if there are any undefined or pending steps
         strict: false,
         // <string> (expression) only execute the features or scenarios with tags matching the expression
-        tagExpression: '',
+        tagExpression: '@smoke or @regression',
         // <number> timeout for step definitions
         timeout: 60000,
         // <boolean> Enable this config to treat undefined definitions as warnings.
@@ -186,8 +207,9 @@ export const config: WebdriverIO.Config = {
      * @param {object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      */
-    // onPrepare: function (config, capabilities) {
-    // },
+    
+    onPrepare: function (config, capabilities) {
+    },
     /**
      * Gets executed before a worker process is spawned and can be used to initialize specific service
      * for that worker as well as modify runtime environments in an async fashion.
@@ -241,8 +263,10 @@ export const config: WebdriverIO.Config = {
      * @param {string}                   uri      path to feature file
      * @param {GherkinDocument.IFeature} feature  Cucumber feature object
      */
-    // beforeFeature: function (uri, feature) {
-    // },
+    beforeFeature: function (uri, feature) {
+        console.log('Feature URI: ', uri);
+        console.log('Exeucting Feature: ', feature.name);
+    },
     /**
      *
      * Runs before a Cucumber Scenario.
@@ -258,8 +282,9 @@ export const config: WebdriverIO.Config = {
      * @param {IPickle}            scenario scenario pickle
      * @param {object}             context  Cucumber World object
      */
-    // beforeStep: function (step, scenario, context) {
-    // },
+    beforeStep: function (step, scenario, context) {
+        console.log('Running Scenario Step: ', step.text);
+    },
     /**
      *
      * Runs after a Cucumber Step.
@@ -291,8 +316,9 @@ export const config: WebdriverIO.Config = {
      * @param {string}                   uri      path to feature file
      * @param {GherkinDocument.IFeature} feature  Cucumber feature object
      */
-    // afterFeature: function (uri, feature) {
-    // },
+    afterFeature: function (uri, feature) {
+        console.log('Finished Exuecting Feature: ', feature.name);
+    },
     
     /**
      * Runs after a WebdriverIO command gets executed
@@ -310,8 +336,9 @@ export const config: WebdriverIO.Config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that ran
      */
-    // after: function (result, capabilities, specs) {
-    // },
+    after: function (result, capabilities, specs) {
+        console.log('Execution Result: ', result == 0 ? 'Passed' : 'Failed');
+    },
     /**
      * Gets executed right after terminating the webdriver session.
      * @param {object} config wdio configuration object
