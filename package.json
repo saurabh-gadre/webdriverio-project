@@ -16,6 +16,7 @@
   },
   "scripts": {
     "cleandir": "rimraf ./allure-results && rimraf ./results",
+    "ci-wdio": "npm run cleandir && wdio run ./ci.wdio.conf.ts",
     "wdio": "npm run cleandir && wdio run ./wdio.conf.ts",
     "allure-report": "npx allure generate allure-results --clean && npx allure open"
   }
