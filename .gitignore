@@ -7,3 +7,4 @@ allure-results/
 .tmp/
 /allure-report
 .vscode
+package-lock.json
